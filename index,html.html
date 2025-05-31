@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QU Course Section Monitor</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            max-width: 700px;
+            width: 100%;
+            margin-top: 30px;
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="number"] {
+            width: calc(100% - 24px);
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1em;
+            transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        input[type="text"]:focus,
+        input[type="password"]:focus,
+        input[type="email"]:focus,
+        input[type="number"]:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+            outline: none;
+        }
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        button {
+            flex: 1;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease-in-out;
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        #startMonitoringBtn {
+            background-color: #28a745;
+            color: white;
+        }
+        #startMonitoringBtn:hover {
+            background-color: #218838;
+        }
+        #stopMonitoringBtn {
+            background-color: #dc3545;
+            color: white;
+        }
+        #stopMonitoringBtn:hover {
+            background-color: #c82333;
+        }
+        #statusMessage {
+            margin-top: 25px;
+            padding: 15px;
+            border-radius: 8px;
+            font-weight: 500;
+            text-align: center;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .monitor-list {
+            margin-top: 30px;
+            border-top: 1px solid #eee;
+            padding-top: 20px;
+        }
+        .monitor-list h2 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.6em;
+        }
+        .monitor-item {
+            background-color: #f0f0f0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.95em;
+        }
+        .monitor-item span {
+            font-weight: bold;
+            color: #444;
+        }
+        .monitor-item .stop-button {
+            background-color: #ffc107;
+            color: #333;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+        .monitor-item .stop-button:hover {
+            background-color: #e0a800;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>QU Course Section Monitor</h1>
+        <form id="monitorForm">
+            <div class="form-group">
+                <label for="quEmail">QU Email (for login):</label>
+                <input type="email" id="quEmail" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" required>
+            </div>
+
+            <div class="form-group">
+                <label for="personalEmail">Personal Email (to receive alerts):</label>
+                <input type="email" id="personalEmail" required>
+            </div>
+
+            <div class="form-group">
+                <label for="subjectCode">Subject Code (e.g., PHYS, ARAB):</label>
+                <input type="text" id="subjectCode" required>
+            </div>
+
+            <div class="form-group">
+                <label for="courseNumber">Course Number (e.g., 193, 100):</label>
+                <input type="text" id="courseNumber" required>
+            </div>
+
+            <div class="form-group">
+                <label for="genderPreference">Gender Preference (male or female):</label>
+                <input type="text" id="genderPreference" required placeholder="male or female">
+            </div>
+
+            <div class="form-group">
+                <label for="interval">Refresh Interval in Minutes (can be decimal):</label>
+                <input type="number" id="interval" step="0.1" min="0.1" required>
+            </div>
+
+            <div class="button-group">
+                <button type="submit" id="startMonitoringBtn">Start Monitoring</button>
+            </div>
+        </form>
+
+        <div id="statusMessage"></div>
+
+        <div class="monitor-list">
+            <h2>Currently Monitored Courses</h2>
+            <div id="activeMonitors">
+                <p>No courses being monitored yet.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://127.0.0.1:5000';
+
+        const monitorForm = document.getElementById('monitorForm');
+        const statusDiv = document.getElementById('statusMessage');
+        const activeMonitorsDiv = document.getElementById('activeMonitors');
+
+        function showStatus(message, type) {
+            statusDiv.className = type;
+            statusDiv.textContent = message;
+        }
+
+        async function fetchActiveMonitors() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/status`);
+                const data = await response.json();
+                renderActiveMonitors(data.active_monitors);
+            } catch (error) {
+                console.error("Error fetching active monitors:", error);
+            }
+        }
+
+        function renderActiveMonitors(monitors) {
+            activeMonitorsDiv.innerHTML = '';
+            if (monitors.length === 0) {
+                activeMonitorsDiv.innerHTML = '<p>No courses being monitored yet.</p>';
+                return;
+            }
+
+            monitors.forEach(monitor => {
+                const monitorItem = document.createElement('div');
+                monitorItem.className = 'monitor-item';
+                monitorItem.innerHTML = `
+                    <span>
+                        <strong>${monitor.subject_code} ${monitor.course_number} (${monitor.gender_preference.charAt(0).toUpperCase() + monitor.gender_preference.slice(1)})</strong>
+                        - Refresh every ${monitor.interval} mins
+                    </span>
+                    <button class="stop-button" data-subject="${monitor.subject_code}" data-course="${monitor.course_number}" data-gender="${monitor.gender_preference}">Stop</button>
+                `;
+                activeMonitorsDiv.appendChild(monitorItem);
+            });
+
+            document.querySelectorAll('.stop-button').forEach(button => {
+                button.addEventListener('click', stopMonitoring);
+            });
+        }
+
+        async function startMonitoring(event) {
+            event.preventDefault();
+
+            showStatus('Initiating monitoring...', 'warning');
+
+            const data = {
+                qu_email: document.getElementById('quEmail').value,
+                password: document.getElementById('password').value,
+                personal_email: document.getElementById('personalEmail').value,
+                // app_password is no longer sent from frontend
+                subject_code: document.getElementById('subjectCode').value.toUpperCase().trim(),
+                course_number: document.getElementById('courseNumber').value.trim(),
+                gender_preference: document.getElementById('genderPreference').value.toLowerCase().trim(),
+                interval: parseFloat(document.getElementById('interval').value)
+            };
+
+            if (isNaN(data.interval) || data.interval <= 0) {
+                showStatus('Please enter a valid positive number for the refresh interval.', 'error');
+                return;
+            }
+            if (!['male', 'female'].includes(data.gender_preference)) {
+                showStatus('Gender preference must be "male" or "female".', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/start_monitoring`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showStatus(result.message, result.status);
+                    monitorForm.reset();
+                    fetchActiveMonitors();
+                } else {
+                    showStatus(`Error: ${result.message || 'Something went wrong.'}`, 'error');
+                }
+            } catch (error) {
+                console.error("Network error:", error);
+                showStatus(`Network error: Could not connect to the server. Please ensure the backend is running. (${error.message})`, 'error');
+            }
+        }
+
+        async function stopMonitoring(event) {
+            const button = event.target;
+            const subjectCode = button.dataset.subject;
+            const courseNumber = button.dataset.course;
+            const genderPreference = button.dataset.gender;
+
+            showStatus(`Requesting to stop monitoring for ${subjectCode} ${courseNumber}...`, 'warning');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/stop_monitoring`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        subject_code: subjectCode,
+                        course_number: courseNumber,
+                        gender_preference: genderPreference
+                    })
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showStatus(result.message, result.status);
+                    setTimeout(fetchActiveMonitors, 1000);
+                } else {
+                    showStatus(`Error stopping: ${result.message || 'Something went wrong.'}`, 'error');
+                }
+            } catch (error) {
+                console.error("Network error:", error);
+                showStatus(`Network error: Could not connect to the server to stop monitoring. (${error.message})`, 'error');
+            }
+        }
+
+        monitorForm.addEventListener('submit', startMonitoring);
+        document.addEventListener('DOMContentLoaded', fetchActiveMonitors);
+        setInterval(fetchActiveMonitors, 5000);
+    </script>
+</body>
+</html>
